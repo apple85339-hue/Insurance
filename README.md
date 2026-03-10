@@ -99,7 +99,7 @@
     </style>
 
     <!-- Chosen Palette: 專業深度色系 -->
-    <!-- Application Structure Plan: 在 Step 4 整合 API Key 管理介面，並將模型修正為公開穩定的 gemini-1.5-flash，確保在 GitHub Pages 環境下能正常運作。 -->
+    <!-- Application Structure Plan: 確保所有 API 調用均使用公開穩定的 gemini-1.5-flash 模型，以解決 GitHub Pages 環境下的權限錯誤。 -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 </head>
 <body class="min-h-screen">
@@ -354,7 +354,7 @@
 
         const personaData = {
             newborn: { title: "新生兒保單專家", desc: "目標：新手爸媽。核心：解決焦慮、建立第一份防護。" },
-            asset: { title: "資產傳承專家", desc: "目標：中高資產。核心：稅務節省、財富永續。" },
+            asset: { title: "資產傳傳承專家", desc: "目標：中高資產。核心：稅務節省、財富永續。" },
             saving: { title: "小資存錢達人", desc: "目標：社會新鮮人。核心：高 CP 值、輕鬆存錢。" }
         };
 
@@ -370,7 +370,7 @@
         // --- Gemini API 實作 ---
         async function callGemini(userQuery, systemPrompt) {
             if (!currentApiKey) throw new Error("請先填入 API 金鑰");
-            // 使用公開版本的穩定模型 gemini-1.5-flash
+            // 修正為公開穩定模型路徑
             const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${currentApiKey}`;
             const payload = {
                 contents: [{ parts: [{ text: userQuery }] }],
@@ -418,7 +418,7 @@
             if (!lastGeneratedText || !currentApiKey) return;
             const btn = document.getElementById('btn-play-tts');
             btn.innerText = "⏳";
-            // TTS 模型同步更新為公開版本支援的型號
+            // TTS 模型同步修正
             const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${currentApiKey}`;
             try {
                 const res = await fetch(endpoint, {
@@ -438,7 +438,7 @@
                 audio.play();
             } catch (e) { 
                 console.error(e); 
-                alert("語音生成失敗，請檢查金鑰或網路。");
+                alert("語音生成失敗，請檢查金鑰。");
             }
             finally { btn.innerText = "🔊"; }
         }
