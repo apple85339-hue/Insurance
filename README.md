@@ -99,7 +99,7 @@
     </style>
 
     <!-- Chosen Palette: 專業深度色系 -->
-    <!-- Application Structure Plan: 在 Step 4 整合 API Key 管理介面，確保 GitHub Pages 部署後的安全性。使用者需輸入自己的金鑰才能啟用 AI 功能，金鑰儲存於瀏覽器 localStorage。 -->
+    <!-- Application Structure Plan: 在 Step 4 整合 API Key 管理介面，並將模型修正為公開穩定的 gemini-1.5-flash，確保在 GitHub Pages 環境下能正常運作。 -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 </head>
 <body class="min-h-screen">
@@ -370,7 +370,8 @@
         // --- Gemini API 實作 ---
         async function callGemini(userQuery, systemPrompt) {
             if (!currentApiKey) throw new Error("請先填入 API 金鑰");
-            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${currentApiKey}`;
+            // 使用公開版本的穩定模型 gemini-1.5-flash
+            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${currentApiKey}`;
             const payload = {
                 contents: [{ parts: [{ text: userQuery }] }],
                 systemInstruction: { parts: [{ text: systemPrompt }] }
@@ -417,13 +418,17 @@
             if (!lastGeneratedText || !currentApiKey) return;
             const btn = document.getElementById('btn-play-tts');
             btn.innerText = "⏳";
-            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${currentApiKey}`;
+            // TTS 模型同步更新為公開版本支援的型號
+            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${currentApiKey}`;
             try {
                 const res = await fetch(endpoint, {
                     method: 'POST',
                     body: JSON.stringify({
                         contents: [{ parts: [{ text: "語氣親切地朗讀：" + lastGeneratedText }] }],
-                        generationConfig: { responseModalities: ["AUDIO"], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: "Kore" } } } }
+                        generationConfig: { 
+                            responseModalities: ["AUDIO"], 
+                            speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: "Kore" } } } 
+                        }
                     })
                 });
                 const result = await res.json();
@@ -431,7 +436,10 @@
                 const audioBuffer = await pcmToWav(base64, 24000);
                 const audio = new Audio(URL.createObjectURL(new Blob([audioBuffer], { type: 'audio/wav' })));
                 audio.play();
-            } catch (e) { console.error(e); }
+            } catch (e) { 
+                console.error(e); 
+                alert("語音生成失敗，請檢查金鑰或網路。");
+            }
             finally { btn.innerText = "🔊"; }
         }
 
