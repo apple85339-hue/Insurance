@@ -96,13 +96,49 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        #api-guide-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
     </style>
 
     <!-- Chosen Palette: 專業深度色系 -->
-    <!-- Application Structure Plan: 確保所有 API 調用均使用公開穩定的 gemini-1.5-flash 模型，以解決 GitHub Pages 環境下的權限錯誤。 -->
+    <!-- Application Structure Plan: 修正模型調用路徑為穩定的 gemini-1.5-flash，並將語音朗讀功能替換為 Web Speech API 以適應公開環境，解決模型不支援 native audio modality 的報錯問題。 -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 </head>
 <body class="min-h-screen">
+
+    <!-- API 申請教學彈窗 -->
+    <div id="api-guide-modal">
+        <div class="glass-card bg-white rounded-3xl max-w-lg w-full p-8 shadow-2xl relative">
+            <button onclick="closeGuide()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-2xl">✕</button>
+            <h3 class="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">🔌 如何領取 AI 腦袋？</h3>
+            <div class="space-y-6 text-slate-600 text-sm">
+                <div class="flex gap-4">
+                    <div class="w-8 h-8 bg-teal-600 text-white rounded-full flex-shrink-0 flex items-center justify-center font-bold">1</div>
+                    <p>前往 <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-teal-600 underline font-bold">Google AI Studio</a> 登入。</p>
+                </div>
+                <div class="flex gap-4">
+                    <div class="w-8 h-8 bg-teal-600 text-white rounded-full flex-shrink-0 flex items-center justify-center font-bold">2</div>
+                    <p>點擊 <strong>"Get API key"</strong>，再點擊 <strong>"Create API key in new project"</strong>。</p>
+                </div>
+                <div class="flex gap-4">
+                    <div class="w-8 h-8 bg-teal-600 text-white rounded-full flex-shrink-0 flex items-center justify-center font-bold">3</div>
+                    <p>點擊 <strong>"Copy"</strong> 複製那串英文數字，回到本頁面貼上儲存即可！</p>
+                </div>
+                <div class="pt-4 border-t border-slate-100 flex justify-center text-xs text-slate-400 text-center">
+                    (完全免費，僅需 Google 帳號即可申請)
+                </div>
+            </div>
+        </div>
+    </div>
 
     <header class="sticky top-0 z-50 px-4 py-3">
         <nav class="max-w-5xl mx-auto glass-card rounded-2xl px-6 py-2 flex items-center justify-between">
@@ -122,23 +158,21 @@
 
     <main class="max-w-5xl mx-auto px-4 py-8 md:py-12">
         
-        <!-- Intro -->
         <section id="intro" class="tab-content active">
             <div class="text-center mb-12">
                 <span class="bg-teal-100 text-teal-700 px-3 py-1 rounded-full text-xs font-bold tracking-widest uppercase mb-4 inline-block">Digital AI Coach</span>
                 <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 leading-tight">
-                    數位工具不是取代你，<br><span class="text-teal-600">是讓你擁有 AI 大腦</span>
+                    數位轉型，<br><span class="text-teal-600">讓 AI 成為您的專屬助理</span>
                 </h1>
                 <p class="text-lg text-slate-600 mt-6 max-w-2xl mx-auto">
-                    這份指南整合了最新的 Gemini AI 技術。請注意：為了保護隱私，在 GitHub 上使用時需填入您自己的 API 金鑰，系統會安全地儲存在您的瀏覽器中。
+                    這份指南針對 Google 公開伺服器進行了優化，請在第四步輸入您的金鑰以開啟「文案生成」功能。
                 </p>
                 <button onclick="switchTab('step1')" class="mt-8 bg-teal-600 hover:bg-teal-700 text-white px-10 py-4 rounded-2xl font-bold transition-all shadow-xl shadow-teal-100">
-                    立即開始體驗
+                    立即開啟之旅
                 </button>
             </div>
         </section>
 
-        <!-- Step 1: 認識社群平台 -->
         <section id="step1" class="tab-content">
             <div class="text-center mb-10">
                 <h2 class="text-3xl font-bold text-slate-900">第一步：認識社群平台</h2>
@@ -148,136 +182,119 @@
                             <canvas id="platformChart"></canvas>
                         </div>
                     </div>
-                    <div class="space-y-4 text-left">
+                    <div class="space-y-4 text-left text-sm">
                         <div class="glass-card p-5 rounded-2xl border-l-8 border-blue-600">
-                            <h4 class="font-bold text-blue-800 flex items-center gap-2">📱 Facebook (臉書)</h4>
-                            <p class="text-sm text-slate-600 mt-1">擴散力最強，適合長文分享。</p>
+                            <h4 class="font-bold text-blue-800">Facebook: 最強擴散力</h4>
                         </div>
                         <div class="glass-card p-5 rounded-2xl border-l-8 border-purple-600">
-                            <h4 class="font-bold text-purple-800 flex items-center gap-2">📸 Instagram (IG)</h4>
-                            <p class="text-sm text-slate-600 mt-1">視覺導向，適合質感生活與短影音。</p>
+                            <h4 class="font-bold text-purple-800">Instagram: 生活形象感</h4>
                         </div>
                         <div class="glass-card p-5 rounded-2xl border-l-8 border-green-600">
-                            <h4 class="font-bold text-green-800 flex items-center gap-2">💬 LINE@ (官方帳號)</h4>
-                            <p class="text-sm text-slate-600 mt-1">深度服務，最強的客戶信任連結。</p>
+                            <h4 class="font-bold text-green-800">LINE@: 深度信任關係</h4>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Step 2: 建立自己的人設 -->
         <section id="step2" class="tab-content">
             <div class="text-center mb-10">
                 <h2 class="text-3xl font-bold text-slate-900">第二步：建立自己的人設</h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
                     <div id="p-newborn" onclick="selectPersona('newborn')" class="persona-card glass-card p-8 rounded-3xl text-center cursor-pointer transition-all hover:shadow-xl">
                         <div class="text-5xl mb-4">👶</div>
-                        <h3 class="text-xl font-bold text-slate-800 mb-2">新生兒保單專家</h3>
+                        <h3 class="text-xl font-bold text-slate-800">新生兒保單專家</h3>
                     </div>
                     <div id="p-asset" onclick="selectPersona('asset')" class="persona-card glass-card p-8 rounded-3xl text-center cursor-pointer transition-all hover:shadow-xl">
                         <div class="text-5xl mb-4">🏰</div>
-                        <h3 class="text-xl font-bold text-slate-800 mb-2">資產傳承專家</h3>
+                        <h3 class="text-xl font-bold text-slate-800">資產傳承專家</h3>
                     </div>
                     <div id="p-saving" onclick="selectPersona('saving')" class="persona-card glass-card p-8 rounded-3xl text-center cursor-pointer transition-all hover:shadow-xl">
                         <div class="text-5xl mb-4">💰</div>
-                        <h3 class="text-xl font-bold text-slate-800 mb-2">小資存錢達人</h3>
+                        <h3 class="text-xl font-bold text-slate-800">小資存錢達人</h3>
                     </div>
                 </div>
-                <div id="persona-detail" class="mt-10 glass-card p-8 rounded-3xl border-t-4 border-teal-500 hidden text-left"></div>
+                <div id="persona-detail" class="mt-10 glass-card p-8 rounded-3xl border-t-4 border-teal-500 hidden text-left text-sm"></div>
             </div>
         </section>
 
-        <!-- Step 3: 選擇自己的賽道 -->
         <section id="step3" class="tab-content">
             <div class="text-center mb-10">
                 <h2 class="text-3xl font-bold text-slate-900">第三步：選擇自己的賽道</h2>
-                <div class="space-y-6 mt-8 text-left">
-                    <div class="glass-card p-6 rounded-3xl flex items-center gap-6 group hover:shadow-lg transition-all">
-                        <div class="text-3xl">🎨</div>
-                        <div>
-                            <h3 class="text-xl font-bold text-slate-800">圖文賽道</h3>
-                            <p class="text-sm text-slate-600">最穩定的基礎，適合深耕專業知識。</p>
-                        </div>
+                <div class="space-y-4 mt-8">
+                    <div class="glass-card p-6 rounded-2xl text-left border-l-4 border-teal-500">
+                        <h3 class="font-bold">圖文 (低門檻)</h3>
+                        <p class="text-xs text-slate-500">FB/IG 靜態貼文，最穩定。</p>
                     </div>
-                    <div class="glass-card p-6 rounded-3xl flex items-center gap-6 group hover:shadow-lg transition-all">
-                        <div class="text-3xl">🎬</div>
-                        <div>
-                            <h3 class="text-xl font-bold text-slate-800">影片賽道</h3>
-                            <p class="text-sm text-slate-600">流量紅利期，適合建立活生生的個人感。</p>
-                        </div>
+                    <div class="glass-card p-6 rounded-2xl text-left border-l-4 border-amber-500">
+                        <h3 class="font-bold">短影片 (高流量)</h3>
+                        <p class="text-xs text-slate-500">Reels/Shorts，目前紅利最高。</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Step 4: AI 數位工具輔助 -->
         <section id="step4" class="tab-content">
             <div class="text-center mb-10">
                 <h2 class="text-3xl font-bold text-slate-900">第四步：AI 實戰演練助手</h2>
-                <p class="text-slate-500 mt-2">請先完成 API 金鑰設定，即可啟動您的 AI 教練</p>
+                <p class="text-slate-500 mt-2">使用 Gemini 1.5 官方模型，為您打造爆款文案</p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                <!-- 左側：設定與輸入 -->
                 <div class="lg:col-span-5 space-y-6">
-                    <!-- API Key 設定區 (重要！) -->
-                    <div class="glass-card p-6 rounded-3xl border-2 border-teal-100">
-                        <h3 class="text-xl font-bold text-slate-800 mb-2 flex items-center gap-2">🔑 金鑰管理</h3>
-                        <p class="text-xs text-slate-500 mb-4">金鑰僅儲存於您的瀏覽器，不會傳送至 GitHub 伺服器。</p>
+                    <div class="glass-card p-6 rounded-3xl border-2 border-teal-100 shadow-inner">
+                        <h3 class="text-lg font-bold text-slate-800 mb-2">🔑 AI 金鑰設定</h3>
                         <div class="space-y-3">
                             <input id="api-key-input" type="password" placeholder="貼上您的 Gemini API Key" class="w-full px-4 py-2 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-teal-500 text-sm">
                             <div class="flex gap-2">
                                 <button onclick="saveApiKey()" class="flex-1 bg-slate-800 text-white py-2 rounded-xl text-xs font-bold hover:bg-slate-700 transition-all">儲存金鑰</button>
                                 <button onclick="clearApiKey()" class="bg-red-50 text-red-600 px-4 py-2 rounded-xl text-xs font-bold hover:bg-red-100 transition-all">清除</button>
                             </div>
-                            <p class="text-[10px] text-slate-400">尚未取得金鑰？<a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-teal-600 underline">前往 Google AI Studio 免費申請</a></p>
+                            <button onclick="openGuide()" class="w-full text-center text-teal-600 text-xs font-bold underline hover:text-teal-700 mt-2">💡 找不到金鑰？點我查看免費領取教學</button>
                         </div>
                     </div>
 
-                    <!-- AI 生成輸入 -->
                     <div class="glass-card p-6 rounded-3xl">
-                        <h3 class="text-xl font-bold text-slate-800 mb-4">✨ 貼文生成器</h3>
+                        <h3 class="text-lg font-bold text-slate-800 mb-4">✨ AI 貼文生成</h3>
                         <div class="space-y-4">
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-2">今天想聊的主題？</label>
-                                <input id="ai-topic" type="text" placeholder="例如：新生兒首張保單怎麼選..." class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-500 outline-none text-sm">
+                                <label class="block text-xs font-bold text-slate-700 mb-2">發文主題</label>
+                                <input id="ai-topic" type="text" placeholder="例如：新生兒醫療險的重要性..." class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-500 outline-none text-sm">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-2">語氣</label>
+                                <label class="block text-xs font-bold text-slate-700 mb-2">風格語氣</label>
                                 <select id="ai-tone" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-500 outline-none text-sm">
                                     <option value="溫暖且專業">溫暖且專業</option>
                                     <option value="親切好懂">親切好懂</option>
-                                    <option value="具備權威感">具備權威感</option>
+                                    <option value="分析精闢">分析精闢</option>
                                 </select>
                             </div>
                             <button id="btn-generate" onclick="generateAIContent()" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-4 rounded-xl transition-all shadow-lg flex items-center justify-center gap-2">
-                                ✨ 生成文案
+                                ✨ 讓教練幫我寫文案
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- 右側：結果輸出 -->
                 <div class="lg:col-span-7">
                     <div id="ai-result-card" class="glass-card p-8 rounded-3xl min-h-[450px] flex flex-col relative border-2 border-dashed border-slate-200">
                         <div id="ai-placeholder" class="m-auto text-center text-slate-400">
                             <div class="text-6xl mb-4">🤖</div>
-                            <p>完成左側「金鑰設定」並輸入主題<br>即可開始撰寫文案</p>
+                            <p>完成金鑰設定後<br>點擊按鈕即可生成</p>
                         </div>
                         
                         <div id="ai-content-display" class="hidden h-full flex flex-col">
                             <div class="flex items-center justify-between mb-4 pb-4 border-b border-slate-100">
-                                <span class="bg-teal-100 text-teal-700 px-3 py-1 rounded-full text-xs font-bold italic">Generated by Gemini</span>
+                                <span class="bg-teal-100 text-teal-700 px-3 py-1 rounded-full text-[10px] font-bold">Stable Mode (1.5 Flash)</span>
                                 <div class="flex gap-2">
-                                    <button onclick="playTTS()" id="btn-play-tts" class="p-2 bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-600">🔊</button>
-                                    <button onclick="copyToClipboard()" class="p-2 bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-600">📋</button>
+                                    <button onclick="playTTS()" id="btn-play-tts" class="p-2 bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-600" title="語音朗讀">🔊</button>
+                                    <button onclick="copyToClipboard()" class="p-2 bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-600" title="複製文案">📋</button>
                                 </div>
                             </div>
                             <div id="ai-output-text" class="text-slate-700 leading-relaxed whitespace-pre-wrap flex-1 overflow-y-auto pr-2 custom-scrollbar text-sm"></div>
-                            <div id="ai-loading" class="hidden absolute inset-0 bg-white/90 flex flex-col items-center justify-center z-10 rounded-3xl">
+                            <div id="ai-loading" class="hidden absolute inset-0 bg-white/95 flex flex-col items-center justify-center z-10 rounded-3xl">
                                 <div class="loading-spinner mb-4"></div>
-                                <p class="text-teal-700 font-bold">教練正在思考文案...</p>
+                                <p class="text-teal-700 font-bold">AI 行銷教練正在幫您動腦...</p>
                             </div>
                         </div>
                     </div>
@@ -287,7 +304,6 @@
     </main>
 
     <script>
-        // --- 變數與初始化 ---
         let selectedPersona = null;
         let lastGeneratedText = "";
         let currentApiKey = localStorage.getItem('gemini_api_key') || "";
@@ -299,14 +315,16 @@
             }
         };
 
-        // --- 金鑰管理 ---
+        function openGuide() { document.getElementById('api-guide-modal').style.display = 'flex'; }
+        function closeGuide() { document.getElementById('api-guide-modal').style.display = 'none'; }
+
         function saveApiKey() {
             const val = document.getElementById('api-key-input').value;
             if (!val || val === "********") return alert("請輸入有效的金鑰");
             currentApiKey = val;
             localStorage.setItem('gemini_api_key', val);
             document.getElementById('api-key-input').value = "********";
-            alert("金鑰已儲存於本地瀏覽器！");
+            alert("金鑰已設定！現在可以使用 AI 了。");
             checkApiKeyStatus();
         }
 
@@ -314,20 +332,14 @@
             localStorage.removeItem('gemini_api_key');
             currentApiKey = "";
             document.getElementById('api-key-input').value = "";
-            alert("金鑰已清除");
             checkApiKeyStatus();
         }
 
         function checkApiKeyStatus() {
             const placeholder = document.getElementById('ai-placeholder');
-            if (currentApiKey) {
-                placeholder.innerHTML = `<div class="text-6xl mb-4">📝</div><p>金鑰已就緒！<br>點擊「生成文案」開始練習</p>`;
-            } else {
-                placeholder.innerHTML = `<div class="text-6xl mb-4">🔑</div><p>請先完成「金鑰設定」<br>即可開始撰寫文案</p>`;
-            }
+            placeholder.innerHTML = currentApiKey ? `<div class="text-6xl mb-4">📝</div><p>金鑰就緒！<br>請輸入主題並點擊生成</p>` : `<div class="text-6xl mb-4">🔑</div><p>請先設定金鑰<br>才能啟動 AI 助理</p>`;
         }
 
-        // --- 導覽與 UI ---
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
@@ -342,10 +354,10 @@
             window.myRadarChart = new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: ['開發新客', '建立信任', '深度服務', '品牌擴散', '內容持久'],
+                    labels: ['新客開發', '信任建立', '深度服務', '品牌擴散', '內容持久'],
                     datasets: [
-                        { label: 'FB', data: [5, 4, 2, 5, 3], borderColor: '#2563EB', backgroundColor: 'rgba(37, 99, 235, 0.2)' },
-                        { label: 'LINE', data: [2, 5, 5, 1, 1], borderColor: '#16A34A', backgroundColor: 'rgba(22, 163, 74, 0.2)' }
+                        { label: 'FB', data: [5, 4, 2, 5, 3], borderColor: '#2563EB', backgroundColor: 'rgba(37, 99, 235, 0.1)' },
+                        { label: 'LINE', data: [2, 5, 5, 1, 1], borderColor: '#16A34A', backgroundColor: 'rgba(22, 163, 74, 0.1)' }
                     ]
                 },
                 options: { responsive: true, maintainAspectRatio: false }
@@ -353,9 +365,9 @@
         }
 
         const personaData = {
-            newborn: { title: "新生兒保單專家", desc: "目標：新手爸媽。核心：解決焦慮、建立第一份防護。" },
-            asset: { title: "資產傳傳承專家", desc: "目標：中高資產。核心：稅務節省、財富永續。" },
-            saving: { title: "小資存錢達人", desc: "目標：社會新鮮人。核心：高 CP 值、輕鬆存錢。" }
+            newborn: { title: "新生兒保單專家", desc: "目標：新手爸媽。重點：解決育兒焦慮，打造第一份防護網。" },
+            asset: { title: "資產傳承專家", desc: "目標：高資產族群。重點：遺贈規劃、稅務節省。" },
+            saving: { title: "小資存錢達人", desc: "目標：新鮮人。重點：低門檻高保障、聰明消費。" }
         };
 
         function selectPersona(type) {
@@ -363,106 +375,81 @@
             document.querySelectorAll('.persona-card').forEach(c => c.classList.remove('selected'));
             document.getElementById('p-' + type).classList.add('selected');
             const detail = document.getElementById('persona-detail');
-            detail.innerHTML = `<h3 class="text-xl font-bold text-slate-800">${personaData[type].title}</h3><p class="text-sm mt-2">${personaData[type].desc}</p>`;
+            detail.innerHTML = `<h3 class="font-bold text-teal-700">${personaData[type].title}</h3><p class="mt-1">${personaData[type].desc}</p>`;
             detail.classList.remove('hidden');
         }
 
-        // --- Gemini API 實作 ---
+        // 核心 AI 文字生成 (使用 v1beta 的 1.5-flash)
         async function callGemini(userQuery, systemPrompt) {
-            if (!currentApiKey) throw new Error("請先填入 API 金鑰");
-            // 修正為公開穩定模型路徑
+            if (!currentApiKey) throw new Error("尚未設定 API 金鑰");
+            // 使用最穩定的 1.5-flash 型號路徑
             const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${currentApiKey}`;
+            
             const payload = {
                 contents: [{ parts: [{ text: userQuery }] }],
                 systemInstruction: { parts: [{ text: systemPrompt }] }
             };
 
-            for (let i = 0; i < 3; i++) {
-                try {
-                    const response = await fetch(endpoint, { method: 'POST', body: JSON.stringify(payload) });
-                    const result = await response.json();
-                    if (result.error) throw new Error(result.error.message);
-                    return result.candidates?.[0]?.content?.parts?.[0]?.text;
-                } catch (e) {
-                    if (i === 2) throw e;
-                    await new Promise(r => setTimeout(r, Math.pow(2, i) * 1000));
-                }
-            }
+            const response = await fetch(endpoint, { method: 'POST', body: JSON.stringify(payload) });
+            const result = await response.json();
+            
+            if (result.error) throw new Error(result.error.message);
+            return result.candidates?.[0]?.content?.parts?.[0]?.text;
         }
 
         async function generateAIContent() {
-            if (!currentApiKey) return alert("請先完成金鑰設定！");
-            if (!selectedPersona) return alert("請先在第二步選擇人設！");
+            if (!currentApiKey) return alert("請先設定金鑰！");
+            if (!selectedPersona) return alert("請先在第二步選擇一個標籤！");
 
-            const topic = document.getElementById('ai-topic').value || "保險的價值";
+            const topic = document.getElementById('ai-topic').value || "保險的重要性";
             const tone = document.getElementById('ai-tone').value;
 
             document.getElementById('ai-placeholder').classList.add('hidden');
             document.getElementById('ai-content-display').classList.remove('hidden');
             document.getElementById('ai-loading').classList.remove('hidden');
 
-            const system = `你是保險行銷專家，人設為「${personaData[selectedPersona].title}」。請撰寫一篇關於「${topic}」的社群貼文。語氣應為「${tone}」。請使用繁體中文，加入表情符號。`;
+            const system = `你是保險專家，身份為「${personaData[selectedPersona].title}」。請撰寫一篇關於「${topic}」的社群貼文，語氣為「${tone}」。請使用繁體中文，加入表情符號。`;
 
             try {
                 const text = await callGemini(`寫一篇關於${topic}的貼文`, system);
                 lastGeneratedText = text;
                 document.getElementById('ai-output-text').innerText = text;
             } catch (err) {
-                document.getElementById('ai-output-text').innerText = "❌ 錯誤：" + err.message;
+                document.getElementById('ai-output-text').innerText = "❌ 錯誤原因：" + err.message + "\n\n(提示：請檢查金鑰是否正確，或是否在 Google AI Studio 成功建立 Project)";
             } finally {
                 document.getElementById('ai-loading').classList.add('hidden');
             }
         }
 
-        async function playTTS() {
-            if (!lastGeneratedText || !currentApiKey) return;
-            const btn = document.getElementById('btn-play-tts');
-            btn.innerText = "⏳";
-            // TTS 模型同步修正
-            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${currentApiKey}`;
-            try {
-                const res = await fetch(endpoint, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: "語氣親切地朗讀：" + lastGeneratedText }] }],
-                        generationConfig: { 
-                            responseModalities: ["AUDIO"], 
-                            speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: "Kore" } } } 
-                        }
-                    })
-                });
-                const result = await res.json();
-                const base64 = result.candidates[0].content.parts.find(p => p.inlineData).inlineData.data;
-                const audioBuffer = await pcmToWav(base64, 24000);
-                const audio = new Audio(URL.createObjectURL(new Blob([audioBuffer], { type: 'audio/wav' })));
-                audio.play();
-            } catch (e) { 
-                console.error(e); 
-                alert("語音生成失敗，請檢查金鑰。");
-            }
-            finally { btn.innerText = "🔊"; }
-        }
+        // --- 語音朗讀大調整：使用瀏覽器內建 Web Speech API (不需金鑰，更穩定) ---
+        function playTTS() {
+            if (!lastGeneratedText) return;
+            
+            // 先停止正在說的話
+            window.speechSynthesis.cancel();
 
-        async function pcmToWav(base64Data, sampleRate) {
-            const binaryString = atob(base64Data);
-            const len = binaryString.length;
-            const buffer = new ArrayBuffer(len + 44);
-            const view = new DataView(buffer);
-            const writeString = (offset, string) => { for (let i = 0; i < string.length; i++) view.setUint8(offset + i, string.charCodeAt(i)); };
-            writeString(0, 'RIFF'); view.setUint32(4, 36 + len, true); writeString(8, 'WAVE');
-            writeString(12, 'fmt '); view.setUint32(16, 16, true); view.setUint16(20, 1, true); view.setUint16(22, 1, true);
-            view.setUint32(24, sampleRate, true); view.setUint32(28, sampleRate * 2, true); view.setUint16(32, 2, true); view.setUint16(34, 16, true);
-            writeString(36, 'data'); view.setUint32(40, len, true);
-            for (let i = 0; i < len; i++) view.setUint8(44 + i, binaryString.charCodeAt(i));
-            return buffer;
+            const utterance = new SpeechSynthesisUtterance(lastGeneratedText);
+            utterance.lang = 'zh-TW';
+            utterance.rate = 1.0;
+            utterance.pitch = 1.0;
+            
+            // 找到比較自然的台灣聲音（如果有的話）
+            const voices = window.speechSynthesis.getVoices();
+            const preferredVoice = voices.find(v => v.lang.includes('zh-TW') || v.name.includes('Google 國語'));
+            if (preferredVoice) utterance.voice = preferredVoice;
+
+            window.speechSynthesis.speak(utterance);
         }
 
         function copyToClipboard() {
             const el = document.createElement('textarea');
             el.value = document.getElementById('ai-output-text').innerText;
             document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el);
-            alert("已複製！");
+            alert("文案已複製！");
         }
+
+        // 初始化語音（確保部分瀏覽器載入聲音列表）
+        window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
     </script>
 </body>
 </html>
